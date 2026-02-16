@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 
+
+//when user sign in then its token become = payload of that user + jwt secret (which is stored in .env file)
 module.exports = (req, res, next) => {
   const token = req.cookies.token;
 

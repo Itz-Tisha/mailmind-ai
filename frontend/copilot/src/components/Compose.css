@@ -1,0 +1,152 @@
+/* Compose page styles (new) */
+
+.composePage {
+  min-height: 100vh;
+  padding: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+html[data-theme="dark"] .composePage {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  --cp-text: #ffffff;
+  --cp-muted: rgba(255, 255, 255, 0.6);
+  --cp-border: rgba(255, 255, 255, 0.12);
+  --cp-border-2: rgba(255, 255, 255, 0.2);
+  --cp-surface: rgba(255, 255, 255, 0.05);
+  --cp-surface-2: rgba(255, 255, 255, 0.03);
+  --cp-input: rgba(255, 255, 255, 0.06);
+  --cp-shadow: 0 14px 50px rgba(0, 0, 0, 0.35);
+}
+
+html[data-theme="light"] .composePage {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  --cp-text: #1a1a2e;
+  --cp-muted: rgba(0, 0, 0, 0.55);
+  --cp-border: rgba(0, 0, 0, 0.1);
+  --cp-border-2: rgba(0, 0, 0, 0.2);
+  --cp-surface: rgba(255, 255, 255, 0.85);
+  --cp-surface-2: rgba(255, 255, 255, 0.7);
+  --cp-input: rgba(255, 255, 255, 0.95);
+  --cp-shadow: 0 14px 50px rgba(0, 0, 0, 0.12);
+}
+
+.composeCard {
+  width: 100%;
+  max-width: 880px;
+  background: var(--cp-surface);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--cp-border);
+  border-radius: 22px;
+  padding: 28px;
+  box-shadow: var(--cp-shadow);
+}
+
+.composeField {
+  margin-bottom: 14px;
+}
+
+.composeInput,
+.composeTextarea {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid var(--cp-border);
+  background: var(--cp-input);
+  color: var(--cp-text);
+  padding: 14px 16px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.composeInput::placeholder,
+.composeTextarea::placeholder {
+  color: var(--cp-muted);
+}
+
+.composeInput:focus,
+.composeTextarea:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.18);
+}
+
+.composeTextarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.composePrimaryBtn {
+  width: 100%;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 10px 26px rgba(102, 126, 234, 0.35);
+}
+
+.composePrimaryBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(102, 126, 234, 0.45);
+}
+
+.composeDraftWrap {
+  margin-top: 18px;
+  background: var(--cp-surface-2);
+  border: 1px solid var(--cp-border);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.composeDraft {
+  margin: 0;
+  padding: 18px;
+  color: var(--cp-text);
+  background: transparent;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.composeDraftActions {
+  display: flex;
+  gap: 10px;
+  padding: 14px 18px 18px;
+}
+
+.composeActionBtn {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid var(--cp-border-2);
+  background: var(--cp-surface);
+  color: var(--cp-text);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.composeActionBtn:hover {
+  transform: translateY(-2px);
+}
+
+.composeSaveBtn {
+  border: none;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #ffffff;
+}
+
+.composeDiscardBtn {
+  background: transparent;
+}
+
