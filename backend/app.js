@@ -1,6 +1,7 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-require('dotenv').config();
+const aiMoodRoutes = require('./routes/aiMood');
 const cookieParser = require('cookie-parser');
 const cors = require('cors'); 
 const gmailDraftRoutes = require('./routes/gmailDraft');
@@ -28,10 +29,13 @@ app.use("/api/compose", require("./routes/compose"));
 
 app.use('/ai-extra', require('./routes/aiRoutes'));
 
-
-
+app.use('/ai-mood', aiMoodRoutes);
+const threadReplyRoutes = require("./routes/threadReply");
+app.use("/thread", threadReplyRoutes);
 app.use('/gmail', gmailDraftRoutes);
 
 app.listen(process.env.PORT, () =>
   console.log(`Server running on ${process.env.PORT}`)
 );
+const startDailyReportCron = require('./cron/dailySummary');
+startDailyReportCron();

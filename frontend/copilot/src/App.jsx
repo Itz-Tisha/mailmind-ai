@@ -3,7 +3,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Login from "./components/Login";
 import Home from "./components/Home";
 import Compose from "./components/Compose"; 
-
+import Profile from "./components/Profile";
 function App() {
   return (
     <ThemeProvider>
@@ -12,6 +12,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
         <Route path="/compose" element={<Compose />} />
+      <Route path="/profile" element={<Profile/>}/>
       </Routes>
     </ThemeProvider>
   );

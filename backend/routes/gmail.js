@@ -110,10 +110,11 @@ router.get('/emails', async (req, res) => {
         const headers = detail.data.payload.headers;
 
         return {
-          subject: headers.find(h => h.name === 'Subject')?.value,
-          from: headers.find(h => h.name === 'From')?.value,
-          snippet: detail.data.snippet,
-          body: getBody(detail.data.payload) 
+          threadId: detail.data.threadId,   // ✅ ADD THIS
+  subject: headers.find(h => h.name === 'Subject')?.value,
+  from: headers.find(h => h.name === 'From')?.value,
+  snippet: detail.data.snippet,
+  body: getBody(detail.data.payload)
         };
       })
     );
@@ -130,3 +131,4 @@ router.get('/emails', async (req, res) => {
 
 
 module.exports = router;
+

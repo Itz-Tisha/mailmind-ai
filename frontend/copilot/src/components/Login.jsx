@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
-import './Login.css';
+import '../assets/Login.css';
 
 const Login = () => {
   const { colors, theme, toggleTheme } = useTheme();

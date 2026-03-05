@@ -13,6 +13,7 @@ const groq = new Groq({
 /* ---------------- GENERATE ONLY ---------------- */
 
 router.post("/generate", async (req, res) => {
+  
   try {
     const { userId, to, subject, description } = req.body;
 
@@ -27,7 +28,7 @@ router.post("/generate", async (req, res) => {
         .join("\n\n");
 
       sameSubjectCount = record.history.filter(
-        h => h.subject === subject
+        h => h.subject.trim().toLowerCase() === subject.trim().toLowerCase()
       ).length;
     }
 
@@ -36,6 +37,8 @@ router.post("/generate", async (req, res) => {
     if (sameSubjectCount === 1) tone = "reminder";
     if (sameSubjectCount === 2) tone = "firm";
     if (sameSubjectCount >= 3) tone = "strict";
+    console.log("Attempt:", sameSubjectCount + 1);
+console.log("Tone selected:", tone);
 
     const prompt = `
 You are a professional email assistant.
@@ -45,29 +48,41 @@ Recipient already knows the topic.
 Email attempt number: ${sameSubjectCount + 1}
 Tone level: ${tone}
 
-TONE RULES:
+TONE DEFINITIONS:
 
 polite:
-friendly follow-up.
+Friendly and respectful.
+No pressure.
+Gentle follow-up.
 
 reminder:
-short reminder.
+Short reminder.
+Slight urgency.
+Still respectful.
 
 firm:
-direct and serious.
+Serious tone.
+Clear expectation of reply.
+Mention importance.
 
 strict:
-authoritative, deadline focused.
+Authoritative.
+Direct.
+Mention consequences.
+No soft phrases.
+No emotional language.
 
 Previous emails:
 ${historyText || "None"}
 
 RULES:
+- Use ONLY the deadline mentioned in Details.
+- Do NOT calculate time remaining.
+- Do NOT mention "today", "48 hours", or similar unless explicitly written in Details.
+- Do NOT invent urgency.
 - Do NOT repeat full assignment details.
-- No "I hope this email finds you well".
 - Under 120 words.
-- Change wording clearly every time.
-- Match tone level.
+- Clearly reflect the selected tone.
 - Ask for status or action.
 
 Write email.
