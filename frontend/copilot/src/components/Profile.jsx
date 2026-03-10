@@ -14,6 +14,8 @@ ChartJS.register(PieController, ArcElement, Tooltip, Legend);
 
 const BACKEND_URL = 'http://localhost:5000';
 
+const BRAND_NAME = 'SmartInbox';
+
 const Profile = () => {
   const [user, setUser] = useState(null);
   const [moodData, setMoodData] = useState(null);
@@ -190,7 +192,7 @@ const Profile = () => {
               boxShadow: '0 4px 15px rgba(102,126,234,0.4)',
             }}
           >
-            PC
+            SI
           </div>
           <div>
             <h1
@@ -201,7 +203,7 @@ const Profile = () => {
                 color: theme === 'dark' ? '#ffffff' : '#1a1a2e',
               }}
             >
-              Profile & Wellbeing
+              {`${BRAND_NAME} · Profile`}
             </h1>
             <p
               style={{

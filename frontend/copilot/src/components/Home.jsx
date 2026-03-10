@@ -1300,39 +1300,129 @@ axios.interceptors.response.use(
   }
 );
 
+// const extractDueDate = (text) => {
+//   // 1️⃣ YYYY-MM-DD
+//   let match = text.match(/(\d{4})-(\d{2})-(\d{2})/);
+//   if (match) return `${match[1]}-${match[2]}-${match[3]}`;
+
+//   // 2️⃣ DD-MM-YYYY
+//   match = text.match(/(\d{1,2})-(\d{1,2})-(\d{4})/);
+//   if (match) {
+//     const day = match[1].padStart(2, '0');
+//     const month = match[2].padStart(2, '0');
+//     return `${match[3]}-${month}-${day}`;
+//   }
+
+//   // 3️⃣ DD Month YYYY  (e.g., 28 February, 2026)
+//   match = text.match(
+//     /(\d{1,2})\s+(January|February|March|April|May|June|July|August|September|October|November|December),?\s+(\d{4})/i
+//   );
+
+//   if (match) {
+//     const day = match[1].padStart(2, '0');
+//     const monthNames = {
+//       january: '01',
+//       february: '02',
+//       march: '03',
+//       april: '04',
+//       may: '05',
+//       june: '06',
+//       july: '07',
+//       august: '08',
+//       september: '09',
+//       october: '10',
+//       november: '11',
+//       december: '12'
+//     };
+
+//     const month = monthNames[match[2].toLowerCase()];
+//     return `${match[3]}-${month}-${day}`;
+//   }
+
+//   return null;
+// };
+
+
+
+
 const extractDueDate = (text) => {
-  // 1️⃣ YYYY-MM-DD
+  const lower = text.toLowerCase();
+  const today = new Date();
+
+  // 1️⃣ today
+  if (lower.includes("today")) {
+    return today.toISOString().split("T")[0];
+  }
+
+  // 2️⃣ tomorrow
+  if (lower.includes("tomorrow")) {
+    const d = new Date();
+    d.setDate(today.getDate() + 1);
+    return d.toISOString().split("T")[0];
+  }
+
+  // 3️⃣ yesterday
+  if (lower.includes("yesterday")) {
+    const d = new Date();
+    d.setDate(today.getDate() - 1);
+    return d.toISOString().split("T")[0];
+  }
+
+  // 4️⃣ next Monday / next Tuesday
+  const matchNextDay = lower.match(/next\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)/);
+
+  if (matchNextDay) {
+    const days = {
+      sunday: 0,
+      monday: 1,
+      tuesday: 2,
+      wednesday: 3,
+      thursday: 4,
+      friday: 5,
+      saturday: 6
+    };
+
+    const target = days[matchNextDay[1]];
+    const date = new Date();
+    const diff = (target + 7 - date.getDay()) % 7 || 7;
+
+    date.setDate(date.getDate() + diff);
+    return date.toISOString().split("T")[0];
+  }
+
+  // 5️⃣ YYYY-MM-DD
   let match = text.match(/(\d{4})-(\d{2})-(\d{2})/);
   if (match) return `${match[1]}-${match[2]}-${match[3]}`;
 
-  // 2️⃣ DD-MM-YYYY
+  // 6️⃣ DD-MM-YYYY
   match = text.match(/(\d{1,2})-(\d{1,2})-(\d{4})/);
   if (match) {
-    const day = match[1].padStart(2, '0');
-    const month = match[2].padStart(2, '0');
+    const day = match[1].padStart(2, "0");
+    const month = match[2].padStart(2, "0");
     return `${match[3]}-${month}-${day}`;
   }
 
-  // 3️⃣ DD Month YYYY  (e.g., 28 February, 2026)
+  // 7️⃣ 28 February 2026
   match = text.match(
     /(\d{1,2})\s+(January|February|March|April|May|June|July|August|September|October|November|December),?\s+(\d{4})/i
   );
 
   if (match) {
-    const day = match[1].padStart(2, '0');
+    const day = match[1].padStart(2, "0");
+
     const monthNames = {
-      january: '01',
-      february: '02',
-      march: '03',
-      april: '04',
-      may: '05',
-      june: '06',
-      july: '07',
-      august: '08',
-      september: '09',
-      october: '10',
-      november: '11',
-      december: '12'
+      january: "01",
+      february: "02",
+      march: "03",
+      april: "04",
+      may: "05",
+      june: "06",
+      july: "07",
+      august: "08",
+      september: "09",
+      october: "10",
+      november: "11",
+      december: "12"
     };
 
     const month = monthNames[match[2].toLowerCase()];
@@ -1341,6 +1431,16 @@ const extractDueDate = (text) => {
 
   return null;
 };
+
+
+
+
+
+
+
+
+
+
 
 const Home = () => {
   const { colors, theme, toggleTheme } = useTheme();
@@ -1516,7 +1616,31 @@ const fetchEmails = async (date = '') => {
 
       setAiLoading(true);
 
-      const KEYWORDS = ['due date', 'deadline', 'last date'];
+      //const KEYWORDS = ['due date', 'deadline', 'last date'];
+
+            const KEYWORDS = [
+        'today',
+        'tomorrow',
+        'due date',
+        'deadline',
+        'last date',
+        'due',
+        'submission date',
+        'submit by',
+        'meeting',
+        'appointment',
+        'schedule',
+        'scheduled on',
+        'event',
+        'webinar',
+        'session',
+        'workshop',
+        'reminder',
+        'starts at',
+        'starting on',
+        'ends on',
+        'before'
+      ];
 
       // const KEYWORDS = ['due', 'deadline', 'submit', 'last date', 'exam', 'interview'];
       const filteredEmails = emails.filter(email =>
@@ -1774,7 +1898,7 @@ fetchEmails(savedDate);
               boxShadow: '0 4px 15px rgba(102,126,234,0.4)',
             }}
           >
-            PC
+            SI
           </div>
           <div>
             <h1
@@ -1785,7 +1909,7 @@ fetchEmails(savedDate);
                 color: theme === 'dark' ? '#ffffff' : '#1a1a2e',
               }}
             >
-              Productivity Copilot
+              SmartInbox
             </h1>
             <p
               style={{
@@ -2569,48 +2693,44 @@ fetchEmails(savedDate);
         </div>
       </div>
 
-       {showModal && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            background: "rgba(0,0,0,0.6)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 9999
-          }}
-        >
-          <div
-            style={{
-              background: "#ffffff",
-              width: "600px",
-              padding: "24px",
-              borderRadius: "12px"
-            }}
-          >
-            <h3>AI Generated Reply</h3>
+      {showModal && (
+        <div className="homeReplyModalBackdrop">
+          <div className="homeReplyModal">
+            <div className="homeReplyModalHeader">
+              <div className="homeReplyModalTitleRow">
+                <span className="homeReplyModalTitleIcon">✨</span>
+                <div>
+                  <h3 className="homeReplyModalTitle">AI Generated Reply</h3>
+                  <p className="homeReplyModalSubtitle">
+                    Review and edit the suggested reply, then save it as a Gmail draft.
+                  </p>
+                </div>
+              </div>
+              <button
+                className="homeReplyModalCloseBtn"
+                onClick={() => setShowModal(false)}
+              >
+                ×
+              </button>
+            </div>
 
             <textarea
               value={generatedReply}
               onChange={(e) => setGeneratedReply(e.target.value)}
               rows={10}
-              style={{
-                width: "100%",
-                padding: "10px",
-                marginBottom: "16px"
-              }}
+              className="homeReplyModalTextarea"
             />
 
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <button onClick={() => setShowModal(false)}>
+            <div className="homeReplyModalFooter">
+              <button
+                className="homeReplyModalGhostBtn"
+                onClick={() => setShowModal(false)}
+              >
                 Discard
               </button>
 
               <button
+                className="homeReplyModalPrimaryBtn"
                 onClick={async () => {
                   try {
                     await axios.post(

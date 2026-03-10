@@ -34,7 +34,7 @@ const Login = () => {
           {/* Logo Section */}
           <div className="loginLogoSection">
             <div className="loginLogoMark">
-              <span className="loginLogoText">PC</span>
+              <span className="loginLogoText">SI</span>
             </div>
             <h1
               className="loginTitle"
@@ -44,7 +44,7 @@ const Login = () => {
             <p
               className="loginSubtitle"
             >
-              Sign in to your productivity copilot
+              Sign in to SmartInbox
             </p>
           </div>
 

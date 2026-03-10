@@ -171,6 +171,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import '../assets/Compose.css';
 
 const BACKEND_URL = 'http://localhost:5000';
+const BRAND_NAME = 'SmartInbox';
 
 export default function Compose() {
   const { theme, toggleTheme } = useTheme();
@@ -179,6 +180,7 @@ export default function Compose() {
   const [subject, setSubject] = useState("");
   const [description, setDescription] = useState("");
   const [draft, setDraft] = useState("");
+  const [showDraftModal, setShowDraftModal] = useState(false);
   const [notification, setNotification] = useState({ show: false, message: '', type: 'info' });
 
   // Show notification helper function
@@ -232,6 +234,7 @@ export default function Compose() {
     );
 
     setDraft(res.data.draft);
+    setShowDraftModal(true);
   } catch (err) {
     if (err.response?.status === 401) {
       localStorage.removeItem("token");
@@ -260,6 +263,7 @@ export default function Compose() {
 
       showNotification("Email draft saved successfully to Gmail!", 'success');
       setDraft("");
+      setShowDraftModal(false);
       setTo("");
       setSubject("");
       setDescription("");
@@ -380,7 +384,7 @@ export default function Compose() {
               boxShadow: '0 4px 15px rgba(102,126,234,0.4)',
             }}
           >
-            PC
+            SI
           </div>
           <div>
             <h1
@@ -391,7 +395,7 @@ export default function Compose() {
                 color: theme === 'dark' ? '#ffffff' : '#1a1a2e',
               }}
             >
-              Compose Email
+              {`${BRAND_NAME} · Compose`}
             </h1>
             <p
               style={{
@@ -542,10 +546,20 @@ export default function Compose() {
         </div>
       </div>
 
-      <div style={{ width: '100%', maxWidth: '1400px', margin: '0 auto' }}>
+      <div
+        style={{
+          width: '100%',
+          maxWidth: '1100px',
+          margin: '0 auto',
+          paddingTop: '120px',   // space below fixed navbar
+          paddingBottom: '48px'
+        }}
+      >
         <div className="composeCard">
           <h2 className="composeCardTitle">Compose New Email</h2>
-          <p className="composeCardSubtitle">AI-powered email composition</p>
+          <p className="composeCardSubtitle">
+            Let {BRAND_NAME} draft a clear, polite message from your description below.
+          </p>
 
           <div className="composeField">
             <label className="composeFieldLabel">Recipient</label>
@@ -578,31 +592,65 @@ export default function Compose() {
           </div>
 
           <button className="composePrimaryBtn" onClick={generate} disabled={!to || !subject || !description}>
-            ✨ Generate Draft
+            ✨ Generate Reply
           </button>
 
-          {draft && (
-            <div className="composeDraftWrap">
-              <div className="composeDraftHeader">
-                <span className="composeDraftHeaderTitle">📝 Generated Draft</span>
-              </div>
-              <pre className="composeDraft">{draft}</pre>
-
-              <div className="composeDraftActions">
-                <button className="composeActionBtn composeSaveBtn" onClick={save}>
-                  💾 Save to Gmail
-                </button>
-                <button
-                  className="composeActionBtn composeDiscardBtn"
-                  onClick={() => setDraft("")}
-                >
-                  🗑️ Discard
-                </button>
-              </div>
-            </div>
-          )}
+          {/* Draft shown in modal instead of inline for a cleaner experience */}
         </div>
       </div>
+
+      {/* Draft Modal */}
+      {showDraftModal && (
+        <div className="composeModalBackdrop">
+          <div className="composeModal">
+            <div className="composeModalHeader">
+              <div className="composeModalTitleRow">
+                <span className="composeModalTitleIcon">✨</span>
+                <div>
+                  <h3 className="composeModalTitle">AI Generated Reply</h3>
+                  <p className="composeModalSubtitle">
+                    Review and fine‑tune the reply before saving it as a Gmail draft.
+                  </p>
+                </div>
+              </div>
+              <button
+                className="composeModalCloseBtn"
+                onClick={() => {
+                  setDraft("");
+                  setShowDraftModal(false);
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            <textarea
+              className="composeModalTextarea"
+              value={draft}
+              onChange={e => setDraft(e.target.value)}
+            />
+
+            <div className="composeModalFooter">
+              <button
+                className="composeModalGhostBtn"
+                onClick={() => {
+                  setDraft("");
+                  setShowDraftModal(false);
+                }}
+              >
+                Discard
+              </button>
+              <button
+                className="composeModalPrimaryBtn"
+                onClick={save}
+                disabled={!draft.trim()}
+              >
+                Save to Draft
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style>{`
         @keyframes slideIn {
