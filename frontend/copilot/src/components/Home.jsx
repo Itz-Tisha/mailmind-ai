@@ -1287,8 +1287,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useTheme } from '../contexts/ThemeContext';
 import '../assets/Home.css';
-
-const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+//const BACKEND_URL = 'http://localhost:5000';
 axios.interceptors.response.use(
   response => response,
   error => {

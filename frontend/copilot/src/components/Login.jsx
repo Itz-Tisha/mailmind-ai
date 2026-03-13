@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import '../assets/Login.css';
-
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const Login = () => {
   const { colors, theme, toggleTheme } = useTheme();
   const params = new URLSearchParams(window.location.search);
@@ -58,10 +58,11 @@ const Login = () => {
 
           {/* Buttons */}
           <div className="loginButtons">
-            <a
+            {/* <a
               href="http://localhost:5000/auth/login?mode=login"
               className="loginLink"
-            >
+            > */}
+            <a href={`${BACKEND_URL}/auth/login?mode=login`} className="loginLink">
               <button
                 type="button"
                 className="loginBtn loginGoogleBtn"
@@ -96,10 +97,12 @@ const Login = () => {
               <div className="loginDividerLine" />
             </div>
 
-            <a
+            {/* <a
               href="http://localhost:5000/auth/login?mode=signup"
               className="loginLink"
             >
+             */}
+              <a href={`${BACKEND_URL}/auth/login?mode=signup`} className="loginLink">
               <button
                 type="button"
                 className="loginBtn loginSignupBtn"

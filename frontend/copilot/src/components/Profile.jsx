@@ -12,8 +12,8 @@ import { useTheme } from '../contexts/ThemeContext';
 // Register pie chart controller & elements
 ChartJS.register(PieController, ArcElement, Tooltip, Legend);
 
-const BACKEND_URL = 'http://localhost:5000';
-
+//const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const BRAND_NAME = 'SmartInbox';
 
 const Profile = () => {
