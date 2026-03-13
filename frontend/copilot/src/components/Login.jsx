@@ -58,10 +58,7 @@ const Login = () => {
 
           {/* Buttons */}
           <div className="loginButtons">
-            {/* <a
-              href="http://localhost:5000/auth/login?mode=login"
-              className="loginLink"
-            > */}
+           
             <a href={`${BACKEND_URL}/auth/login?mode=login`} className="loginLink">
               <button
                 type="button"
