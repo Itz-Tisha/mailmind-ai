@@ -170,7 +170,8 @@ import axios from "axios";
 import { useTheme } from '../contexts/ThemeContext';
 import '../assets/Compose.css';
 
-const BACKEND_URL = 'http://localhost:5000';
+// const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const BRAND_NAME = 'SmartInbox';
 
 export default function Compose() {
@@ -219,8 +220,7 @@ export default function Compose() {
 
  const generate = async () => {
   try {
-    const res = await axios.post(
-      "http://localhost:5000/api/compose/generate",
+    const res = await axios.post(`${BACKEND_URL}/api/compose/generate`,
       {
         to,
         subject,
@@ -248,7 +248,7 @@ export default function Compose() {
   const save = async () => {
     try {
       await axios.post(
-        "http://localhost:5000/api/compose/save",
+        `${BACKEND_URL}/api/compose/save`,
         {
           to,
           subject,
