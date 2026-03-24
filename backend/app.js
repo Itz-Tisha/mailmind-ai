@@ -33,7 +33,7 @@ app.use('/ai-mood', aiMoodRoutes);
 const threadReplyRoutes = require("./routes/threadReply");
 app.use("/thread", threadReplyRoutes);
 app.use('/gmail', gmailDraftRoutes);
-
+app.use("/api", require("./routes/cron"));
 app.listen(process.env.PORT, () =>
   console.log(`Server running on ${process.env.PORT}`)
 );
