@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const MailHistory = require("../models/MailHistory");
+
 const Groq = require("groq-sdk");
 const { google } = require("googleapis");
 const jwt = require("jsonwebtoken");
