@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import '../assets/Login.css';
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+console.log("BACKEND_URL:", BACKEND_URL);
 const Login = () => {
   const { colors, theme, toggleTheme } = useTheme();
   const params = new URLSearchParams(window.location.search);

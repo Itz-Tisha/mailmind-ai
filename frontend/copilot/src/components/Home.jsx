@@ -1,5 +1,8 @@
 
 
+
+
+
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useTheme } from '../contexts/ThemeContext';
@@ -18,6 +21,8 @@ axios.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+
 
 
 
@@ -124,7 +129,7 @@ const Home = () => {
   const { colors, theme, toggleTheme } = useTheme();
   const [user, setUser] = useState(null);
   const [emails, setEmails] = useState([]);
-  // const [selectedDate, setSelectedDate] = useState('');
+
   const [selectedDate, setSelectedDate] = useState(() => {
   return localStorage.getItem('selectedDate') || '';
 });
@@ -212,6 +217,8 @@ const summarizeEmail = async (email, index) => {
   };
 
   
+
+
 
   const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
@@ -371,27 +378,7 @@ const fetchEmails = async (date = '') => {
     window.location.href = '/login';
   };
 
-  // useEffect(() => {
-  //   const params = new URLSearchParams(window.location.search);
-  //   const tokenFromURL = params.get('token');
-
-  //   if (tokenFromURL) {
-  //     localStorage.setItem('token', tokenFromURL);
-  //     window.history.replaceState({}, document.title, '/home');
-  //   }
-
-  //   const token = tokenFromURL || localStorage.getItem('token');
-  //   if (!token) return;
-
-  //   axios
-  //     .get(`${BACKEND_URL}/user/me`, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     })
-  //     .then(res => setUser(res.data))
-  //     .catch(err => console.error(err));
-
-  //   fetchEmails();
-  // }, []);
+ 
 
   useEffect(() => {
   const params = new URLSearchParams(window.location.search);
