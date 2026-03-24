@@ -157,6 +157,7 @@ const Profile = () => {
     >
       {/* Top Navigation Bar */}
       <div
+        className="app-topbar"
         style={{
           background: theme === 'dark'
             ? 'rgba(26,26,46,0.85)'
@@ -175,7 +176,7 @@ const Profile = () => {
             : '0 4px 20px rgba(0,0,0,0.15)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div className="app-topbar-brand" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div
             style={{
               width: 48,
@@ -216,7 +217,7 @@ const Profile = () => {
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div className="app-topbar-actions" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button
             onClick={() => window.location.href = '/home'}
             style={{
@@ -304,8 +305,9 @@ const Profile = () => {
       </div>
 
       {/* Main Content */}
-      <div style={{ padding: '32px', maxWidth: '1200px', margin: '0 auto' }}>
+      <div className="app-main-pad" style={{ padding: '32px', maxWidth: '1200px', margin: '0 auto' }}>
         <div
+          className="profile-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: 'minmax(0, 1.1fr) minmax(0, 0.9fr)',
@@ -315,6 +317,7 @@ const Profile = () => {
         >
           {/* Profile Card */}
           <div
+            className="profile-panel"
             style={{
               background: theme === 'dark'
                 ? 'rgba(255,255,255,0.05)'
@@ -419,6 +422,7 @@ const Profile = () => {
 
           {/* Mood Pie Chart Card */}
           <div
+            className="profile-panel"
             style={{
               background: theme === 'dark'
                 ? 'rgba(255,255,255,0.05)'
@@ -456,6 +460,7 @@ const Profile = () => {
 
             {moodData ? (
               <div
+                className="profile-chart-row"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -470,6 +475,7 @@ const Profile = () => {
                 </div>
 
                 <div
+                  className="profile-chart-legend"
                   style={{
                     minWidth: 130,
                     fontSize: '13px',

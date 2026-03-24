@@ -1,0 +1,119 @@
+/* Layout-only responsive helpers. Pair with existing inline styles via class names. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  .app-topbar {
+    flex-wrap: wrap !important;
+    align-items: flex-start !important;
+    row-gap: 12px !important;
+  }
+
+  .app-topbar-actions {
+    flex-wrap: wrap !important;
+    width: 100% !important;
+    justify-content: flex-start !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-topbar {
+    padding: 12px 16px !important;
+  }
+
+  .app-topbar-brand {
+    min-width: 0;
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  .app-topbar-brand h1 {
+    font-size: clamp(17px, 4.2vw, 20px) !important;
+  }
+
+  .app-topbar-brand p {
+    font-size: 11px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+
+  .app-topbar-actions {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px !important;
+    width: 100% !important;
+    align-items: stretch !important;
+  }
+
+  .app-topbar-actions > button {
+    width: 100% !important;
+    min-width: 0 !important;
+    justify-content: center !important;
+  }
+
+  .app-main-pad {
+    padding: 16px !important;
+  }
+
+  .app-stat-strip > div {
+    padding: 18px !important;
+  }
+
+  .app-controls-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .app-controls-row .app-flex-spacer {
+    display: none !important;
+  }
+
+  .app-controls-row input[type="date"],
+  .app-controls-row button {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .app-emails-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+
+  .app-page-card {
+    padding: 18px !important;
+  }
+
+  .app-notification-toast {
+    left: 12px !important;
+    right: 12px !important;
+    top: 12px !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    width: auto !important;
+  }
+
+  .profile-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .profile-chart-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .profile-chart-legend {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .profile-panel {
+    padding: 20px !important;
+  }
+}

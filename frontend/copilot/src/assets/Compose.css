@@ -30,6 +30,69 @@ html[data-theme="dark"] .composePage {
   --hp-topbar-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
+.composeShell {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 120px 32px 48px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .composeModalBackdrop {
+    padding: 12px;
+  }
+
+  .composeShell {
+    padding: 200px 16px 36px;
+  }
+
+  .composeCard {
+    padding: 20px;
+  }
+
+  .composeCardTitle {
+    font-size: clamp(24px, 7vw, 30px);
+  }
+
+  .composeFieldLabel {
+    font-size: 16px;
+  }
+
+  .composeModalTitle {
+    font-size: clamp(22px, 6vw, 28px);
+  }
+
+  .composeModalHeader {
+    padding: 16px 18px 12px;
+  }
+
+  .composeModalTextarea {
+    min-height: 200px;
+    padding: 16px 18px;
+  }
+
+  .composeModalFooter {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    padding: 14px 18px 18px;
+  }
+
+  .composeModalGhostBtn,
+  .composeModalPrimaryBtn {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .composeDraftActions {
+    flex-direction: column;
+  }
+
+  .composeActionBtn {
+    width: 100%;
+  }
+}
+
 html[data-theme="light"] .composePage {
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   --cp-text: #1a1a2e;
@@ -73,8 +136,31 @@ html[data-theme="light"] .composePage {
   box-shadow: var(--cp-shadow);
 }
 
+.composeCardTitle {
+  margin: 0 0 8px;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--cp-text);
+}
+
+.composeCardSubtitle {
+  margin: 0 0 20px;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--cp-muted);
+}
+
 .composeField {
   margin-bottom: 14px;
+}
+
+.composeFieldLabel {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--cp-text);
 }
 
 .composeInput,
@@ -208,15 +294,16 @@ html[data-theme="light"] .composePage {
   align-items: center;
   justify-content: center;
   z-index: 200;
+  padding: 20px;
 }
 
 .composeModal {
   width: 100%;
-  max-width: 720px;
-  background: #ffffff;
-  border-radius: 16px;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  box-shadow: 0 22px 70px rgba(15, 23, 42, 0.35);
+  max-width: 760px;
+  background: var(--cp-surface);
+  border-radius: 20px;
+  border: 1px solid var(--cp-border);
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.42);
   overflow: hidden;
 }
 
@@ -224,22 +311,26 @@ html[data-theme="light"] .composePage {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
-  background: #111827;
-  color: #ffffff;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 20px 24px 14px;
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 55%, #ecfeff 100%);
+  color: #0f172a;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
 }
 
 .composeModalTitleRow {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
 }
 
 .composeModalTitleIcon {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, #dbeafe 0%, #ede9fe 100%);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -248,83 +339,88 @@ html[data-theme="light"] .composePage {
 
 .composeModalTitle {
   margin: 0;
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .composeModalSubtitle {
-  margin: 2px 0 0;
-  font-size: 12px;
-  opacity: 0.9;
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: rgba(15, 23, 42, 0.72);
 }
 
 .composeModalCloseBtn {
   border: none;
-  background: transparent;
-  color: #ffffff;
-  font-size: 20px;
+  background: rgba(15, 23, 42, 0.06);
+  color: #334155;
+  font-size: 22px;
   cursor: pointer;
-  width: 28px;
-  height: 28px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .composeModalCloseBtn:hover {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(15, 23, 42, 0.12);
+  transform: scale(1.05);
 }
 
 .composeModalTextarea {
   width: 100%;
   min-height: 260px;
   border: none;
+  border-top: 1px solid var(--cp-border);
   border-bottom: 1px solid var(--cp-border);
-  padding: 18px 20px;
-  background: var(--cp-input);
+  padding: 20px 24px;
+  background: #ffffff;
   color: var(--cp-text);
   resize: vertical;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 14px;
-  line-height: 1.7;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
 }
 
 .composeModalTextarea:focus {
   outline: none;
-  box-shadow: inset 0 0 0 1px #667eea;
+  box-shadow: inset 0 0 0 2px rgba(99, 102, 241, 0.45);
 }
 
 .composeModalFooter {
-  padding: 14px 20px 16px;
+  padding: 16px 24px 20px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 10px;
-  background: var(--cp-surface-2);
+  background: #ffffff;
 }
 
 .composeModalGhostBtn,
 .composeModalPrimaryBtn {
-  min-width: 120px;
-  padding: 10px 18px;
-  border-radius: 999px;
+  min-width: 140px;
+  padding: 12px 20px;
+  border-radius: 12px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   border: 1px solid transparent;
   transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
 .composeModalGhostBtn {
-  background: transparent;
-  border-color: var(--cp-border-2);
-  color: var(--cp-text);
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.08);
+  color: #0f172a;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
 }
 
 .composeModalPrimaryBtn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   color: #ffffff;
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.45);
+  box-shadow: 0 10px 26px rgba(99, 102, 241, 0.36);
 }
 
 .composeModalGhostBtn:hover,
@@ -337,4 +433,49 @@ html[data-theme="light"] .composePage {
   cursor: not-allowed;
   box-shadow: none;
   transform: none;
+}
+
+html[data-theme="dark"] .composeModal {
+  background: #111827;
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+html[data-theme="dark"] .composeModalHeader {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  color: #f8fafc;
+  border-bottom-color: rgba(148, 163, 184, 0.2);
+}
+
+html[data-theme="dark"] .composeModalTitleIcon {
+  background: rgba(99, 102, 241, 0.22);
+}
+
+html[data-theme="dark"] .composeModalSubtitle {
+  color: rgba(226, 232, 240, 0.72);
+}
+
+html[data-theme="dark"] .composeModalCloseBtn {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+}
+
+html[data-theme="dark"] .composeModalCloseBtn:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+html[data-theme="dark"] .composeModalTextarea {
+  background: #0f172a;
+  color: #f8fafc;
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+html[data-theme="dark"] .composeModalFooter {
+  background: #111827;
+}
+
+html[data-theme="dark"] .composeModalGhostBtn {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(148, 163, 184, 0.28);
+  color: #f8fafc;
+  box-shadow: none;
 }

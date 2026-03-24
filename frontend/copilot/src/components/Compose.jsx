@@ -1,165 +1,3 @@
-// import { useState, useEffect } from "react";
-// import axios from "axios";
-// import { useTheme } from '../contexts/ThemeContext';
-// import '../assets/Compose.css';
-// import '../assets/Home.css';
-
-// const BACKEND_URL = 'http://localhost:5000';
-
-// export default function Compose() {
-//   const { theme, toggleTheme } = useTheme();
-//   const [user, setUser] = useState(null);
-//   const [to, setTo] = useState("");
-//   const [subject, setSubject] = useState("");
-//   const [description, setDescription] = useState("");
-//   const [draft, setDraft] = useState("");
-
-//   useEffect(() => {
-//     const token = localStorage.getItem('token');
-//     if (!token) {
-//       window.location.href = '/login';
-//       return;
-//     }
-
-//     axios
-//       .get(`${BACKEND_URL}/user/me`, {
-//         headers: { Authorization: `Bearer ${token}` },
-//       })
-//       .then(res => setUser(res.data))
-//       .catch(err => {
-//         console.error(err);
-//         if (err.response?.status === 401) {
-//           localStorage.removeItem('token');
-//           window.location.href = '/login';
-//         }
-//       });
-//   }, []);
-
-//   const handleLogout = () => {
-//     localStorage.removeItem('token');
-//     window.location.href = '/login';
-//   };
-
-//   const generate = async () => {
-//     const res = await axios.post("http://localhost:5000/api/compose/generate", {
-//       userId: "123",
-//       to,
-//       subject,
-//       description
-//     });
-
-//     setDraft(res.data.draft);
-//   };
-
-//   const save = async () => {
-//     await axios.post(
-//       "http://localhost:5000/api/compose/save",
-//       {
-//         userId: "123",
-//         to,
-//         subject,
-//         draft
-//       },
-//       {
-//         headers: {
-//           Authorization: `Bearer ${localStorage.getItem("token")}`
-//         }
-//       }
-//     );
-
-//     alert("Saved to Gmail!");
-//     setDraft("");
-//   };
-
-//   return (
-//     <div className="homePage">
-//       {/* Top Navigation Bar */}
-//       <div className="homeTopbar">
-//         <div className="homeBrand">
-//           <div className="homeBrandLogo">PC</div>
-//           <div>
-//             <h1 className="homeBrandTitle">Productivity Copilot</h1>
-//             <p className="homeBrandSubtitle">{user?.email || 'Loading...'}</p>
-//           </div>
-//         </div>
-
-//         <div className="homeActions">
-//           <button onClick={() => window.location.href = '/home'} className="homeBtn">
-//             <span>🏠</span>
-//             <span>Home</span>
-//           </button>
-
-//           <button onClick={toggleTheme} className="homeBtn">
-//             <span>{theme === 'dark' ? '☀️' : '🌙'}</span>
-//             <span>{theme === 'dark' ? 'Light' : 'Dark'}</span>
-//           </button>
-
-//           <button onClick={() => window.location.href = '/profile'} className="homeBtn">
-//             <span className="homeProfileBadge">
-//               {user?.name ? user.name.charAt(0).toUpperCase() : 'P'}
-//             </span>
-//             <span>Profile</span>
-//           </button>
-
-//           <button onClick={handleLogout} className="homeLogoutBtn">
-//             Logout
-//           </button>
-//         </div>
-//       </div>
-
-//       {/* Main Content */}
-//       <div className="homeMain">
-//         <div className="composeCard">
-//         <div className="composeField">
-//           <input
-//             className="composeInput"
-//             placeholder="To"
-//             onChange={e => setTo(e.target.value)}
-//           />
-//         </div>
-
-//         <div className="composeField">
-//           <input
-//             className="composeInput"
-//             placeholder="Subject"
-//             onChange={e => setSubject(e.target.value)}
-//           />
-//         </div>
-
-//         <div className="composeField">
-//           <textarea
-//             className="composeTextarea"
-//             placeholder="Description"
-//             onChange={e => setDescription(e.target.value)}
-//           />
-//         </div>
-
-//         <button className="composePrimaryBtn" onClick={generate}>
-//           Generate Draft
-//         </button>
-
-//         {draft && (
-//           <div className="composeDraftWrap">
-//             <pre className="composeDraft">{draft}</pre>
-
-//             <div className="composeDraftActions">
-//               <button className="composeActionBtn composeSaveBtn" onClick={save}>
-//                 Save Draft
-//               </button>
-//               <button
-//                 className="composeActionBtn composeDiscardBtn"
-//                 onClick={() => setDraft("")}
-//               >
-//                 Discard
-//               </button>
-//             </div>
-//           </div>
-//         )}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
 
 
 
@@ -283,6 +121,7 @@ export default function Compose() {
       {/* Notification Toast */}
       {notification.show && (
         <div
+          className="app-notification-toast"
           style={{
             position: 'fixed',
             top: '20px',
@@ -348,6 +187,7 @@ export default function Compose() {
       )}
       {/* Top Navigation Bar */}
       <div
+        className="app-topbar"
         style={{
           position: 'fixed',
           top: 0,
@@ -368,7 +208,7 @@ export default function Compose() {
             : '0 4px 20px rgba(0,0,0,0.1)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div className="app-topbar-brand" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div
             style={{
               width: 48,
@@ -409,7 +249,7 @@ export default function Compose() {
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div className="app-topbar-actions" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button
             onClick={() => window.location.href = '/home'}
             style={{
@@ -546,15 +386,7 @@ export default function Compose() {
         </div>
       </div>
 
-      <div
-        style={{
-          width: '100%',
-          maxWidth: '1100px',
-          margin: '0 auto',
-          paddingTop: '120px',   // space below fixed navbar
-          paddingBottom: '48px'
-        }}
-      >
+      <div className="composeShell">
         <div className="composeCard">
           <h2 className="composeCardTitle">Compose New Email</h2>
           <p className="composeCardSubtitle">

@@ -303,3 +303,51 @@ html[data-theme="light"] .loginFooter {
   color: rgba(59, 130, 246, 0.7);
 }
 
+@media (max-width: 520px) {
+  .loginPage {
+    padding: 16px;
+    align-items: flex-start;
+    padding-top: 24px;
+  }
+
+  .loginShell {
+    padding-top: 8px;
+  }
+
+  .loginThemeToggle {
+    position: relative;
+    top: 0;
+    right: auto;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .loginCard {
+    padding: 28px 20px;
+    border-radius: 24px;
+  }
+
+  .loginLogoSection {
+    margin-bottom: 28px;
+  }
+
+  .loginLogoMark {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+  }
+
+  .loginLogoText {
+    font-size: 28px;
+  }
+
+  .loginTitle {
+    font-size: clamp(24px, 7vw, 30px);
+  }
+
+  .loginSubtitle {
+    font-size: 14px;
+  }
+}
+

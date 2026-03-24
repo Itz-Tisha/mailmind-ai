@@ -22,7 +22,7 @@ mongoose.connect(process.env.MONGO_URI)
 app.use('/auth', require('./routes/auth'));  
 app.use('/user', require('./routes/user')); 
 app.use('/gmail', require('./routes/gmail')); 
-// app.use('/ai', require('./routes/ai'));
+
 app.use('/ai', require('./routes/ai'));
 app.use('/calendar', require('./routes/calendar'));
 app.use("/api/compose", require("./routes/compose"));

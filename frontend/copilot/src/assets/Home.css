@@ -523,138 +523,295 @@ html[data-theme="dark"] .homeAiSummaryBox {
 .homeReplyModalBackdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.65);
+  background: rgba(15, 23, 42, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 200;
+  z-index: 9999;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .homeReplyModal {
   width: 100%;
-  max-width: 720px;
+  max-width: 760px;
+  max-height: min(90vh, 720px);
+  display: flex;
+  flex-direction: column;
   background: #ffffff;
-  border-radius: 16px;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  box-shadow: 0 22px 70px rgba(15, 23, 42, 0.35);
+  border-radius: 20px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.22);
   overflow: hidden;
 }
 
 .homeReplyModalHeader {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  padding: 16px 20px;
-  background: #111827;
-  color: #ffffff;
+  gap: 16px;
+  padding: 20px 24px 16px;
+  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 40%, #eef2ff 100%);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  color: #0f172a;
+  flex-shrink: 0;
 }
 
 .homeReplyModalTitleRow {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
+  min-width: 0;
 }
 
 .homeReplyModalTitleIcon {
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.2);
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #bbf7d0 0%, #d9f99d 50%, #e0e7ff 100%);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 20px;
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.2);
 }
 
 .homeReplyModalTitle {
   margin: 0;
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
 }
 
 .homeReplyModalSubtitle {
-  margin: 2px 0 0;
-  font-size: 12px;
-  opacity: 0.9;
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: rgba(15, 23, 42, 0.62);
 }
 
 .homeReplyModalCloseBtn {
   border: none;
-  background: transparent;
-  color: #ffffff;
-  font-size: 20px;
+  background: rgba(15, 23, 42, 0.06);
+  color: #475569;
+  font-size: 22px;
+  line-height: 1;
   cursor: pointer;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
 }
 
 .homeReplyModalCloseBtn:hover {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(15, 23, 42, 0.1);
+  color: #0f172a;
+  transform: scale(1.04);
 }
 
 .homeReplyModalTextarea {
   width: 100%;
-  min-height: 220px;
+  min-height: 240px;
+  flex: 1;
+  box-sizing: border-box;
+  margin: 0;
   border: none;
-  border-bottom: 1px solid var(--hp-border);
-  padding: 18px 20px;
-  background: var(--hp-surface-2);
-  color: var(--hp-text);
+  border-top: 1px solid rgba(15, 23, 42, 0.06);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  padding: 20px 24px;
+  background: #f8fafc;
+  color: #0f172a;
   resize: vertical;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.homeReplyModalTextarea::placeholder {
+  color: rgba(15, 23, 42, 0.38);
 }
 
 .homeReplyModalTextarea:focus {
   outline: none;
-  box-shadow: inset 0 0 0 1px #667eea;
+  box-shadow: inset 0 0 0 2px rgba(34, 197, 94, 0.35);
+  background: #ffffff;
 }
 
 .homeReplyModalFooter {
-  padding: 14px 20px 16px;
+  padding: 16px 24px 20px;
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  background: var(--hp-surface-2);
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: #ffffff;
+  border-top: 1px solid rgba(15, 23, 42, 0.06);
+  flex-shrink: 0;
 }
 
 .homeReplyModalGhostBtn,
 .homeReplyModalPrimaryBtn {
-  min-width: 120px;
-  padding: 10px 18px;
-  border-radius: 999px;
+  min-width: 132px;
+  padding: 12px 20px;
+  border-radius: 12px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   border: 1px solid transparent;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
 }
 
 .homeReplyModalGhostBtn {
-  background: transparent;
-  border-color: var(--hp-border-strong);
-  color: var(--hp-text);
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.12);
+  color: #334155;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
 }
 
-.homeReplyModalPrimaryBtn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #ffffff;
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.45);
-}
-
-.homeReplyModalGhostBtn:hover,
-.homeReplyModalPrimaryBtn:hover {
+.homeReplyModalGhostBtn:hover {
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.18);
   transform: translateY(-1px);
 }
 
+.homeReplyModalPrimaryBtn {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 55%, #15803d 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 22px rgba(34, 197, 94, 0.35);
+}
+
+.homeReplyModalPrimaryBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(34, 197, 94, 0.45);
+}
+
 .homeReplyModalPrimaryBtn:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
   box-shadow: none;
   transform: none;
+}
+
+/* Dark mode — matches app dark theme */
+html[data-theme="dark"] .homeReplyModal {
+  background: #111827;
+  border-color: rgba(148, 163, 184, 0.22);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+}
+
+html[data-theme="dark"] .homeReplyModalBackdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+html[data-theme="dark"] .homeReplyModalHeader {
+  background: linear-gradient(135deg, #14532d 0%, #1e293b 45%, #312e81 100%);
+  color: #f8fafc;
+  border-bottom-color: rgba(148, 163, 184, 0.2);
+}
+
+html[data-theme="dark"] .homeReplyModalTitleIcon {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.35) 0%, rgba(99, 102, 241, 0.35) 100%);
+  box-shadow: 0 4px 18px rgba(34, 197, 94, 0.25);
+}
+
+html[data-theme="dark"] .homeReplyModalSubtitle {
+  color: rgba(226, 232, 240, 0.72);
+}
+
+html[data-theme="dark"] .homeReplyModalCloseBtn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+}
+
+html[data-theme="dark"] .homeReplyModalCloseBtn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .homeReplyModalTextarea {
+  background: #0f172a;
+  color: #f1f5f9;
+  border-color: rgba(148, 163, 184, 0.18);
+}
+
+html[data-theme="dark"] .homeReplyModalTextarea::placeholder {
+  color: rgba(148, 163, 184, 0.55);
+}
+
+html[data-theme="dark"] .homeReplyModalTextarea:focus {
+  box-shadow: inset 0 0 0 2px rgba(34, 197, 94, 0.45);
+  background: #020617;
+}
+
+html[data-theme="dark"] .homeReplyModalFooter {
+  background: #111827;
+  border-top-color: rgba(148, 163, 184, 0.18);
+}
+
+html[data-theme="dark"] .homeReplyModalGhostBtn {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(148, 163, 184, 0.28);
+  color: #e2e8f0;
+  box-shadow: none;
+}
+
+html[data-theme="dark"] .homeReplyModalGhostBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(148, 163, 184, 0.4);
+}
+
+@media (max-width: 640px) {
+  .homeReplyModalBackdrop {
+    padding: 12px;
+  }
+
+  .homeReplyModal {
+    max-height: min(92vh, 100dvh);
+    border-radius: 16px;
+  }
+
+  .homeReplyModalHeader {
+    padding: 16px 18px 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .homeReplyModalTitle {
+    font-size: clamp(17px, 5vw, 20px);
+  }
+
+  .homeReplyModalTextarea {
+    min-height: 180px;
+    padding: 16px 18px;
+  }
+
+  .homeReplyModalFooter {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    padding: 14px 18px 18px;
+  }
+
+  .homeReplyModalGhostBtn,
+  .homeReplyModalPrimaryBtn {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .homeTopbar {
+    padding: 12px 16px;
+  }
+
+  .homeMain {
+    padding: 16px;
+  }
+
+  .homeStatNumber {
+    font-size: clamp(24px, 8vw, 32px);
+  }
 }
