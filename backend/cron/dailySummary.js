@@ -601,3 +601,4 @@ ${emailText}
 }
 
 module.exports = dailySummary;
+
