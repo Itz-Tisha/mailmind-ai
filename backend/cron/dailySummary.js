@@ -387,7 +387,6 @@
 
 
 
-
 const User = require("../models/User");
 const { google } = require("googleapis");
 const PDFDocument = require("pdfkit");
@@ -396,9 +395,7 @@ const path = require("path");
 const sendMailWithAttachment = require("../services/sendWithGmail");
 const Groq = require("groq-sdk");
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 // ================= HELPERS =================
 function decodeBase64Url(data) {
@@ -409,13 +406,38 @@ function decodeBase64Url(data) {
 
 function stripHtml(html) {
   if (!html) return '';
-  return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  return html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, ' ')
+             .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, ' ')
+             .replace(/<[^>]+>/g, ' ')
+             .replace(/\s+/g, ' ')
+             .trim();
+}
+
+// Remove emojis
+function stripEmojis(text) {
+  if (!text) return '';
+  return text.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83C[\uDDE6-\uDDFF])/g, '');
 }
 
 function findBestBodyFromPayload(payload) {
   if (!payload) return '';
+  const mimeType = payload.mimeType || '';
   const bodyData = payload?.body?.data;
-  if (bodyData) return decodeBase64Url(bodyData);
+
+  if (mimeType.startsWith('text/plain') && bodyData) {
+    return decodeBase64Url(bodyData).trim();
+  }
+
+  if (mimeType.startsWith('text/html') && bodyData) {
+    return stripHtml(decodeBase64Url(bodyData)).trim();
+  }
+
+  const parts = payload.parts || [];
+  for (const p of parts) {
+    const text = findBestBodyFromPayload(p);
+    if (text) return text;
+  }
+
   return '';
 }
 
@@ -423,9 +445,7 @@ function findBestBodyFromPayload(payload) {
 async function dailySummary() {
   console.log("🚀 Running Daily Summary Job");
 
-  const users = await User.find({
-    googleRefreshToken: { $exists: true }
-  });
+  const users = await User.find({ googleRefreshToken: { $exists: true } });
 
   for (const user of users) {
     try {
@@ -433,56 +453,53 @@ async function dailySummary() {
         process.env.GOOGLE_CLIENT_ID,
         process.env.GOOGLE_CLIENT_SECRET
       );
-
-      oauth2Client.setCredentials({
-        refresh_token: user.googleRefreshToken
-      });
-
+      oauth2Client.setCredentials({ refresh_token: user.googleRefreshToken });
       const { credentials } = await oauth2Client.refreshAccessToken();
       oauth2Client.setCredentials(credentials);
 
-      const gmail = google.gmail({
-        version: "v1",
-        auth: oauth2Client
-      });
+      const gmail = google.gmail({ version: "v1", auth: oauth2Client });
 
-      const list = await gmail.users.messages.list({
-        userId: "me",
-        q: "newer_than:1d",
-        maxResults: 20
-      });
-
+      const list = await gmail.users.messages.list({ userId: 'me', q: 'newer_than:1d', maxResults: 20 });
       const messages = list.data.messages || [];
       if (!messages.length) continue;
 
       const emailDetails = [];
 
       for (const msg of messages) {
-        const detail = await gmail.users.messages.get({
-          userId: "me",
-          id: msg.id,
-          format: "full"
-        });
-
+        const detail = await gmail.users.messages.get({ userId: 'me', id: msg.id, format: 'full' });
         const headers = detail.data.payload.headers;
-        const subject = headers.find(h => h.name === "Subject")?.value || "";
-        const from = headers.find(h => h.name === "From")?.value || "";
-        const to = headers.find(h => h.name === "To")?.value || "";
 
+        const subjectRaw = headers.find(h => h.name === 'Subject')?.value || '';
+        const subject = stripEmojis(subjectRaw);
+
+        const from = headers.find(h => h.name === 'From')?.value || '';
+        const to = headers.find(h => h.name === 'To')?.value || '';
         const body = findBestBodyFromPayload(detail.data.payload);
 
-        emailDetails.push({ from, subject, to, body });
+        emailDetails.push({ from, to, subject, body });
       }
 
-      const emailText = emailDetails.map((email, i) => `
+      const emailText = emailDetails.map((e, i) => `
 Email ${i + 1}
-From: ${email.from}
-Subject: ${email.subject}
-Content: ${(email.body || "").slice(0, 1500)}
-`).join("\n");
+From: ${e.from}
+To: ${e.to}
+Subject: ${e.subject}
+Content: ${(e.body || e.subject || '').slice(0, 1800)}
+`).join('\n');
 
       const prompt = `
-Return ONLY valid JSON:
+You are an advanced email analyst.
+
+Analyze each email individually and return ONLY valid JSON.
+
+CRITICAL RULES:
+- No markdown or code blocks
+- Remove emojis
+- All string fields must be escaped JSON strings
+- Summary: 2-3 sentence short summary
+- Category: one of "Work", "Personal", "Finance", "Promotions", "Spam", "Other"
+
+Return this exact JSON structure:
 
 {
   "totalEmails": number,
@@ -505,23 +522,24 @@ Return ONLY valid JSON:
   }
 }
 
-Emails:
+Emails to analyze:
 ${emailText}
 `;
 
       let report;
-
       try {
         const completion = await groq.chat.completions.create({
           model: process.env.LLM_MODEL,
-          messages: [{ role: "user", content: prompt }],
+          messages: [{ role: 'user', content: prompt }],
           temperature: 0,
-          response_format: { type: "json_object" }
+          response_format: { type: 'json_object' }
         });
 
-        report = JSON.parse(completion.choices[0].message.content);
+        let content = completion.choices[0].message.content.trim();
+        report = JSON.parse(content);
+
       } catch (err) {
-        console.log("AI failed for:", user.email);
+        console.log('❌ AI generation failed for:', user.email, err.message);
         continue;
       }
 
@@ -529,40 +547,51 @@ ${emailText}
       const filePath = path.join(__dirname, `../reports/report-${user._id}.pdf`);
       fs.mkdirSync(path.dirname(filePath), { recursive: true });
 
-      const doc = new PDFDocument();
-      doc.pipe(fs.createWriteStream(filePath));
+      await new Promise((resolve, reject) => {
+        const doc = new PDFDocument({ margin: 50 });
+        const stream = fs.createWriteStream(filePath);
+        doc.pipe(stream);
 
-      doc.fontSize(20).text("AI Daily Email Report");
-      doc.moveDown();
-
-      (report.emails || []).forEach((e, i) => {
-        doc.fontSize(12).text(`Email ${i + 1}`);
-        doc.text(`From: ${e.from}`);
-        doc.text(`Subject: ${e.subject}`);
-        doc.text(`Summary: ${e.summary}`);
+        doc.fontSize(20).text('AI Daily Email Report', { align: 'center' });
         doc.moveDown();
+        doc.fontSize(12).text(`Total Emails: ${report.totalEmails || 0}`, { align: 'center' });
+        doc.moveDown(1);
+
+        (report.emails || []).forEach((e, i) => {
+          if (doc.y > 650) doc.addPage();
+          doc.fontSize(12).text(`Email ${i + 1}`);
+          doc.fontSize(10).text(`From: ${e.from}`);
+          doc.text(`Subject: ${e.subject}`);
+          doc.text(`Category: ${e.category}`);
+          doc.text(`Summary: ${e.summary}`);
+          doc.moveDown();
+          doc.strokeColor('#cccccc').lineWidth(0.5).moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+          doc.moveDown();
+        });
+
+        doc.end();
+        stream.on('finish', resolve);
+        stream.on('error', reject);
       });
 
-      doc.end();
-
-      await new Promise(r => setTimeout(r, 1500));
-
-      const fileContent = fs.readFileSync(filePath).toString("base64");
+      const fileContent = fs.readFileSync(filePath).toString('base64');
 
       await sendMailWithAttachment({
         accessToken: credentials.access_token,
         to: user.email,
-        subject: "🤖 Daily AI Report",
-        text: "Attached report",
-        fileContent
+        subject: '🤖 Your AI Daily Email Report',
+        text: 'Attached is your AI-generated report.',
+        fileName: 'DailyReport.pdf',
+        mimeType: 'application/pdf',
+        content: fileContent,
+        encoding: 'base64'
       });
 
       fs.unlinkSync(filePath);
-
-      console.log("✅ Sent to:", user.email);
+      console.log('✅ Report sent to:', user.email);
 
     } catch (err) {
-      console.log("❌ Error for user:", user.email);
+      console.log('❌ Error for user:', user.email, err.message);
     }
   }
 }
