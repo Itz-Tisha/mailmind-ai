@@ -385,7 +385,189 @@
 
 
 
+// backend/cron/dailySummary.js
 
+
+// const User = require("../models/User");
+// const { google } = require("googleapis");
+// const PDFDocument = require("pdfkit");
+// const fs = require("fs");
+// const path = require("path");
+// const sendMailWithAttachment = require("../services/sendWithGmail");
+// const Groq = require("groq-sdk");
+
+// const groq = new Groq({
+//   apiKey: process.env.GROQ_API_KEY,
+// });
+
+// // ================= HELPERS =================
+// function decodeBase64Url(data) {
+//   if (!data) return '';
+//   const normalized = data.replace(/-/g, '+').replace(/_/g, '/');
+//   return Buffer.from(normalized, 'base64').toString('utf8');
+// }
+
+// function stripHtml(html) {
+//   if (!html) return '';
+//   return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+// }
+
+// function findBestBodyFromPayload(payload) {
+//   if (!payload) return '';
+//   const bodyData = payload?.body?.data;
+//   if (bodyData) return decodeBase64Url(bodyData);
+//   return '';
+// }
+
+// // ================= MAIN FUNCTION =================
+// async function dailySummary() {
+//   console.log("🚀 Running Daily Summary Job");
+
+//   const users = await User.find({
+//     googleRefreshToken: { $exists: true }
+//   });
+
+//   for (const user of users) {
+//     try {
+//       const oauth2Client = new google.auth.OAuth2(
+//         process.env.GOOGLE_CLIENT_ID,
+//         process.env.GOOGLE_CLIENT_SECRET
+//       );
+
+//       oauth2Client.setCredentials({
+//         refresh_token: user.googleRefreshToken
+//       });
+
+//       const { credentials } = await oauth2Client.refreshAccessToken();
+//       oauth2Client.setCredentials(credentials);
+
+//       const gmail = google.gmail({
+//         version: "v1",
+//         auth: oauth2Client
+//       });
+
+//       const list = await gmail.users.messages.list({
+//         userId: "me",
+//         q: "newer_than:1d",
+//         maxResults: 20
+//       });
+
+//       const messages = list.data.messages || [];
+//       if (!messages.length) continue;
+
+//       const emailDetails = [];
+
+//       for (const msg of messages) {
+//         const detail = await gmail.users.messages.get({
+//           userId: "me",
+//           id: msg.id,
+//           format: "full"
+//         });
+
+//         const headers = detail.data.payload.headers;
+//         const subject = headers.find(h => h.name === "Subject")?.value || "";
+//         const from = headers.find(h => h.name === "From")?.value || "";
+//         const to = headers.find(h => h.name === "To")?.value || "";
+
+//         const body = findBestBodyFromPayload(detail.data.payload);
+
+//         emailDetails.push({ from, subject, to, body });
+//       }
+
+//       const emailText = emailDetails.map((email, i) => `
+// Email ${i + 1}
+// From: ${email.from}
+// Subject: ${email.subject}
+// Content: ${(email.body || "").slice(0, 1500)}
+// `).join("\n");
+
+//       const prompt = `
+// Return ONLY valid JSON:
+
+// {
+//   "totalEmails": number,
+//   "emails": [
+//     {
+//       "index": number,
+//       "from": "string",
+//       "subject": "string",
+//       "summary": "string",
+//       "category": "Work"
+//     }
+//   ],
+//   "categories": {
+//     "Work": number,
+//     "Personal": number,
+//     "Finance": number,
+//     "Promotions": number,
+//     "Spam": number,
+//     "Other": number
+//   }
+// }
+
+// Emails:
+// ${emailText}
+// `;
+
+//       let report;
+
+//       try {
+//         const completion = await groq.chat.completions.create({
+//           model: process.env.LLM_MODEL,
+//           messages: [{ role: "user", content: prompt }],
+//           temperature: 0,
+//           response_format: { type: "json_object" }
+//         });
+
+//         report = JSON.parse(completion.choices[0].message.content);
+//       } catch (err) {
+//         console.log("AI failed for:", user.email);
+//         continue;
+//       }
+
+//       // ================= PDF =================
+//       const filePath = path.join(__dirname, `../reports/report-${user._id}.pdf`);
+//       fs.mkdirSync(path.dirname(filePath), { recursive: true });
+
+//       const doc = new PDFDocument();
+//       doc.pipe(fs.createWriteStream(filePath));
+
+//       doc.fontSize(20).text("AI Daily Email Report");
+//       doc.moveDown();
+
+//       (report.emails || []).forEach((e, i) => {
+//         doc.fontSize(12).text(`Email ${i + 1}`);
+//         doc.text(`From: ${e.from}`);
+//         doc.text(`Subject: ${e.subject}`);
+//         doc.text(`Summary: ${e.summary}`);
+//         doc.moveDown();
+//       });
+
+//       doc.end();
+
+//       await new Promise(r => setTimeout(r, 1500));
+
+//       const fileContent = fs.readFileSync(filePath).toString("base64");
+
+//       await sendMailWithAttachment({
+//         accessToken: credentials.access_token,
+//         to: user.email,
+//         subject: "🤖 Daily AI Report",
+//         text: "Attached report",
+//         fileContent
+//       });
+
+//       fs.unlinkSync(filePath);
+
+//       console.log("✅ Sent to:", user.email);
+
+//     } catch (err) {
+//       console.log("❌ Error for user:", user.email);
+//     }
+//   }
+// }
+
+// module.exports = dailySummary;
 
 
 const User = require("../models/User");
@@ -396,9 +578,7 @@ const path = require("path");
 const sendMailWithAttachment = require("../services/sendWithGmail");
 const Groq = require("groq-sdk");
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 // ================= HELPERS =================
 function decodeBase64Url(data) {
@@ -409,13 +589,33 @@ function decodeBase64Url(data) {
 
 function stripHtml(html) {
   if (!html) return '';
-  return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  return html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, ' ')
+             .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, ' ')
+             .replace(/<[^>]+>/g, ' ')
+             .replace(/\s+/g, ' ')
+             .trim();
 }
 
 function findBestBodyFromPayload(payload) {
   if (!payload) return '';
+
+  const mimeType = payload.mimeType || '';
   const bodyData = payload?.body?.data;
-  if (bodyData) return decodeBase64Url(bodyData);
+
+  if (mimeType.startsWith('text/plain') && bodyData) {
+    return decodeBase64Url(bodyData).trim();
+  }
+
+  if (mimeType.startsWith('text/html') && bodyData) {
+    return stripHtml(decodeBase64Url(bodyData)).trim();
+  }
+
+  const parts = payload.parts || [];
+  for (const p of parts) {
+    const text = findBestBodyFromPayload(p);
+    if (text) return text;
+  }
+
   return '';
 }
 
@@ -423,66 +623,62 @@ function findBestBodyFromPayload(payload) {
 async function dailySummary() {
   console.log("🚀 Running Daily Summary Job");
 
-  const users = await User.find({
-    googleRefreshToken: { $exists: true }
-  });
+  const users = await User.find({ googleRefreshToken: { $exists: true } });
 
   for (const user of users) {
     try {
+      // OAuth
       const oauth2Client = new google.auth.OAuth2(
         process.env.GOOGLE_CLIENT_ID,
         process.env.GOOGLE_CLIENT_SECRET
       );
-
-      oauth2Client.setCredentials({
-        refresh_token: user.googleRefreshToken
-      });
-
+      oauth2Client.setCredentials({ refresh_token: user.googleRefreshToken });
       const { credentials } = await oauth2Client.refreshAccessToken();
       oauth2Client.setCredentials(credentials);
 
-      const gmail = google.gmail({
-        version: "v1",
-        auth: oauth2Client
-      });
+      const gmail = google.gmail({ version: "v1", auth: oauth2Client });
 
-      const list = await gmail.users.messages.list({
-        userId: "me",
-        q: "newer_than:1d",
-        maxResults: 20
-      });
-
+      // Fetch emails from last 1 day
+      const list = await gmail.users.messages.list({ userId: "me", q: "newer_than:1d", maxResults: 20 });
       const messages = list.data.messages || [];
       if (!messages.length) continue;
 
       const emailDetails = [];
 
       for (const msg of messages) {
-        const detail = await gmail.users.messages.get({
-          userId: "me",
-          id: msg.id,
-          format: "full"
-        });
-
+        const detail = await gmail.users.messages.get({ userId: "me", id: msg.id, format: "full" });
         const headers = detail.data.payload.headers;
-        const subject = headers.find(h => h.name === "Subject")?.value || "";
-        const from = headers.find(h => h.name === "From")?.value || "";
-        const to = headers.find(h => h.name === "To")?.value || "";
+
+        const subject = headers.find(h => h.name === "Subject")?.value || '';
+        const from = headers.find(h => h.name === "From")?.value || '';
+        const to = headers.find(h => h.name === "To")?.value || '';
 
         const body = findBestBodyFromPayload(detail.data.payload);
-
         emailDetails.push({ from, subject, to, body });
       }
 
-      const emailText = emailDetails.map((email, i) => `
+      const emailText = emailDetails.map((e, i) => `
 Email ${i + 1}
-From: ${email.from}
-Subject: ${email.subject}
-Content: ${(email.body || "").slice(0, 1500)}
+From: ${e.from}
+To: ${e.to}
+Subject: ${e.subject}
+Content: ${(e.body || e.subject || "").slice(0, 1800)}
 `).join("\n");
 
+      // AI Prompt
       const prompt = `
-Return ONLY valid JSON:
+You are an advanced email analyst.
+
+Analyze each email individually and create a structured report in JSON format.
+
+CRITICAL RULES:
+1. Return ONLY valid JSON (no markdown or code blocks)
+2. Remove any emojis or special Unicode characters
+3. All string values must be properly escaped JSON strings
+4. Summary should be 2-3 sentences max
+5. Category must be exactly one of: "Work", "Personal", "Finance", "Promotions", "Spam", "Other"
+
+Return JSON with this structure:
 
 {
   "totalEmails": number,
@@ -505,12 +701,11 @@ Return ONLY valid JSON:
   }
 }
 
-Emails:
+Emails to analyze:
 ${emailText}
 `;
 
       let report;
-
       try {
         const completion = await groq.chat.completions.create({
           model: process.env.LLM_MODEL,
@@ -519,9 +714,14 @@ ${emailText}
           response_format: { type: "json_object" }
         });
 
-        report = JSON.parse(completion.choices[0].message.content);
+        // Parse AI output
+        let content = completion.choices[0].message.content.trim();
+        // Remove any code fences if present
+        content = content.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+        report = JSON.parse(content);
+
       } catch (err) {
-        console.log("AI failed for:", user.email);
+        console.log("❌ AI generation failed for:", user.email);
         continue;
       }
 
@@ -529,40 +729,47 @@ ${emailText}
       const filePath = path.join(__dirname, `../reports/report-${user._id}.pdf`);
       fs.mkdirSync(path.dirname(filePath), { recursive: true });
 
-      const doc = new PDFDocument();
+      const doc = new PDFDocument({ margin: 50 });
       doc.pipe(fs.createWriteStream(filePath));
 
-      doc.fontSize(20).text("AI Daily Email Report");
+      doc.fontSize(20).text("AI Daily Email Report", { align: 'center' });
       doc.moveDown();
+      doc.fontSize(12).text(`Total Emails: ${report.totalEmails || 0}`, { align: 'center' });
+      doc.moveDown(1);
 
       (report.emails || []).forEach((e, i) => {
+        if (doc.y > 650) doc.addPage();
         doc.fontSize(12).text(`Email ${i + 1}`);
-        doc.text(`From: ${e.from}`);
+        doc.fontSize(10).text(`From: ${e.from}`);
         doc.text(`Subject: ${e.subject}`);
+        doc.text(`Category: ${e.category}`);
         doc.text(`Summary: ${e.summary}`);
+        doc.moveDown();
+        doc.strokeColor('#cccccc').lineWidth(0.5).moveTo(50, doc.y).lineTo(550, doc.y).stroke();
         doc.moveDown();
       });
 
       doc.end();
 
+      // Wait for PDF
       await new Promise(r => setTimeout(r, 1500));
 
       const fileContent = fs.readFileSync(filePath).toString("base64");
 
+      // Send email
       await sendMailWithAttachment({
         accessToken: credentials.access_token,
         to: user.email,
-        subject: "🤖 Daily AI Report",
-        text: "Attached report",
+        subject: "🤖 Your AI Daily Email Report",
+        text: "Attached is your AI-generated report.",
         fileContent
       });
 
       fs.unlinkSync(filePath);
-
-      console.log("✅ Sent to:", user.email);
+      console.log("✅ Report sent to:", user.email);
 
     } catch (err) {
-      console.log("❌ Error for user:", user.email);
+      console.log("❌ Error for user:", user.email, err.message);
     }
   }
 }
