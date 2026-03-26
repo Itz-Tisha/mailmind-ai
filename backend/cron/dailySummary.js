@@ -568,8 +568,6 @@
 // }
 
 // module.exports = dailySummary;
-
-
 const User = require("../models/User");
 const { google } = require("googleapis");
 const PDFDocument = require("pdfkit");
@@ -627,7 +625,7 @@ async function dailySummary() {
 
   for (const user of users) {
     try {
-      // OAuth
+      // OAuth2 setup
       const oauth2Client = new google.auth.OAuth2(
         process.env.GOOGLE_CLIENT_ID,
         process.env.GOOGLE_CLIENT_SECRET
@@ -657,6 +655,7 @@ async function dailySummary() {
         emailDetails.push({ from, subject, to, body });
       }
 
+      // Build email text for AI
       const emailText = emailDetails.map((e, i) => `
 Email ${i + 1}
 From: ${e.from}
@@ -714,9 +713,7 @@ ${emailText}
           response_format: { type: "json_object" }
         });
 
-        // Parse AI output
         let content = completion.choices[0].message.content.trim();
-        // Remove any code fences if present
         content = content.replace(/^```json\s*/, '').replace(/\s*```$/, '');
         report = JSON.parse(content);
 
@@ -729,30 +726,32 @@ ${emailText}
       const filePath = path.join(__dirname, `../reports/report-${user._id}.pdf`);
       fs.mkdirSync(path.dirname(filePath), { recursive: true });
 
-      const doc = new PDFDocument({ margin: 50 });
-      doc.pipe(fs.createWriteStream(filePath));
+      await new Promise((resolve, reject) => {
+        const doc = new PDFDocument({ margin: 50 });
+        const stream = fs.createWriteStream(filePath);
+        doc.pipe(stream);
 
-      doc.fontSize(20).text("AI Daily Email Report", { align: 'center' });
-      doc.moveDown();
-      doc.fontSize(12).text(`Total Emails: ${report.totalEmails || 0}`, { align: 'center' });
-      doc.moveDown(1);
+        doc.fontSize(20).text("AI Daily Email Report", { align: 'center' });
+        doc.moveDown();
+        doc.fontSize(12).text(`Total Emails: ${report.totalEmails || 0}`, { align: 'center' });
+        doc.moveDown(1);
 
-      (report.emails || []).forEach((e, i) => {
-        if (doc.y > 650) doc.addPage();
-        doc.fontSize(12).text(`Email ${i + 1}`);
-        doc.fontSize(10).text(`From: ${e.from}`);
-        doc.text(`Subject: ${e.subject}`);
-        doc.text(`Category: ${e.category}`);
-        doc.text(`Summary: ${e.summary}`);
-        doc.moveDown();
-        doc.strokeColor('#cccccc').lineWidth(0.5).moveTo(50, doc.y).lineTo(550, doc.y).stroke();
-        doc.moveDown();
+        (report.emails || []).forEach((e, i) => {
+          if (doc.y > 650) doc.addPage();
+          doc.fontSize(12).text(`Email ${i + 1}`);
+          doc.fontSize(10).text(`From: ${e.from}`);
+          doc.text(`Subject: ${e.subject}`);
+          doc.text(`Category: ${e.category}`);
+          doc.text(`Summary: ${e.summary}`);
+          doc.moveDown();
+          doc.strokeColor('#cccccc').lineWidth(0.5).moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+          doc.moveDown();
+        });
+
+        doc.end();
+        stream.on('finish', resolve);
+        stream.on('error', reject);
       });
-
-      doc.end();
-
-      // Wait for PDF
-      await new Promise(r => setTimeout(r, 1500));
 
       const fileContent = fs.readFileSync(filePath).toString("base64");
 
@@ -762,7 +761,10 @@ ${emailText}
         to: user.email,
         subject: "🤖 Your AI Daily Email Report",
         text: "Attached is your AI-generated report.",
-        fileContent
+        fileName: "DailyReport.pdf",
+        mimeType: "application/pdf",
+        content: fileContent,
+        encoding: "base64"
       });
 
       fs.unlinkSync(filePath);
