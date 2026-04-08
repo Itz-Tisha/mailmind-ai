@@ -9,7 +9,7 @@ router.get("/run-daily-report", async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    await dailySummary(); // ✅ YOUR FUNCTION NAME
+     dailySummary(); // ✅ YOUR FUNCTION NAME
 
     res.json({ success: true, message: "Daily summary executed" });
 

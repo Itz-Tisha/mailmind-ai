@@ -5,6 +5,7 @@ const aiMoodRoutes = require('./routes/aiMood');
 const cookieParser = require('cookie-parser');
 const cors = require('cors'); 
 const gmailDraftRoutes = require('./routes/gmailDraft');
+const cronRoutes = require("./routes/cron");
 const app = express();
 app.use(cors({
   origin: process.env.FRONTEND_URL, 
